@@ -1,12 +1,12 @@
-# Controle de Demandas - Setor de Cadastro e Legalização
+# Demand Management - Registration and Legalization Department
 
-Sistema web desenvolvido em **Next.js** para controle de demandas internas do setor de cadastro, legalização e acompanhamento de processos.
+Web application built with **Next.js** for managing internal demands related to company registration, legalization, process tracking, and operational follow-up.
 
-O projeto permite cadastrar, acompanhar, atualizar, concluir e consultar demandas, com controle de usuários, permissões, histórico de movimentações e anexos salvos no MongoDB Atlas via GridFS.
+The system allows users to create, track, update, complete, and manage demands, with user permissions, movement history, file attachments, and administrative controls.
 
 ---
 
-## Stack utilizada
+## Tech Stack
 
 * Next.js 15
 * TypeScript
@@ -18,29 +18,29 @@ O projeto permite cadastrar, acompanhar, atualizar, concluir e consultar demanda
 
 ---
 
-## Principais funcionalidades
+## Main Features
 
-* Cadastro de usuários
-* Login de acesso
-* Controle de permissões por perfil
-* Cadastro de novas demandas
-* Painel de acompanhamento de demandas
-* Painel administrativo
-* Alteração de status
-* Definição de prioridade
-* Definição de responsável
-* Inclusão de observações
-* Histórico de movimentações
-* Upload de documentos
-* Download de anexos
-* Exclusão automática de anexos ao concluir demanda
-* Gestão de usuários pelo administrador
+* User registration
+* Login access
+* Role-based permissions
+* New demand creation
+* Demand tracking panel
+* Administrative dashboard
+* Status updates
+* Priority management
+* Responsible user assignment
+* Internal notes and observations
+* Demand history
+* File upload
+* File download
+* Automatic attachment deletion when a demand is completed
+* User approval and management by administrators
 
 ---
 
-## Collections do MongoDB
+## MongoDB Collections
 
-O Mongoose cria automaticamente as collections no primeiro uso:
+Mongoose automatically creates the collections on first use:
 
 ```text
 users
@@ -48,27 +48,27 @@ demands
 demand_history
 ```
 
-Os arquivos anexados são armazenados no MongoDB Atlas via **GridFS**.
+Uploaded files are stored in MongoDB Atlas using **GridFS**.
 
 ---
 
-## Configuração do MongoDB Atlas
+## MongoDB Atlas Setup
 
-1. Crie uma conta no MongoDB Atlas.
-2. Crie um projeto.
-3. Crie um cluster.
-4. Em **Database Access**, crie um usuário de banco de dados.
-5. Em **Network Access**, libere o IP local para desenvolvimento.
-6. Para deploy na Vercel, pode ser necessário liberar:
+1. Create a MongoDB Atlas account.
+2. Create a project.
+3. Create a cluster.
+4. Go to **Database Access** and create a database user.
+5. Go to **Network Access** and allow your local IP address for development.
+6. For Vercel deployment, it may be necessary to allow:
 
 ```text
 0.0.0.0/0
 ```
 
-Atenção: essa regra libera acesso externo amplo ao banco. Use somente se estiver de acordo com sua política de segurança e mantenha usuário e senha fortes.
+Warning: this rule allows broad external access to the database. Use it only if it complies with your security policy and always use strong database credentials.
 
-7. Em **Connect**, copie a string de conexão `mongodb+srv`.
-8. Use um banco com o nome:
+7. Go to **Connect** and copy the `mongodb+srv` connection string.
+8. Use the following database name:
 
 ```text
 controle_demandas
@@ -76,37 +76,37 @@ controle_demandas
 
 ---
 
-## Variáveis de ambiente
+## Environment Variables
 
-Crie um arquivo chamado `.env.local` na raiz do projeto:
+Create a `.env.local` file in the project root:
 
 ```env
-MONGODB_URI=mongodb+srv://USUARIO:SENHA@cluster0.xxxxx.mongodb.net/controle_demandas?retryWrites=true&w=majority&appName=Cluster0
-NEXTAUTH_SECRET=troque-por-uma-chave-grande-e-segura-com-32-caracteres-ou-mais
+MONGODB_URI=mongodb+srv://USER:PASSWORD@cluster0.xxxxx.mongodb.net/controle_demandas?retryWrites=true&w=majority&appName=Cluster0
+NEXTAUTH_SECRET=replace-with-a-long-secure-secret-with-at-least-32-characters
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-Nunca coloque `MONGODB_URI`, senhas, tokens ou chaves secretas no código fonte.
+Never place `MONGODB_URI`, passwords, tokens, or secret keys directly in the source code.
 
-O arquivo `.env.local` não deve ser enviado para o GitHub.
+The `.env.local` file must not be committed to GitHub.
 
 ---
 
-## Instalação local
+## Local Installation
 
-Instale as dependências:
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-Execute o projeto em ambiente local:
+Run the development server:
 
 ```bash
 npm run dev
 ```
 
-Acesse:
+Open:
 
 ```text
 http://localhost:3000/login
@@ -114,23 +114,23 @@ http://localhost:3000/login
 
 ---
 
-## Build local
+## Local Build
 
-Antes de publicar ou subir alterações para produção, recomenda-se testar o build:
+Before deploying or pushing production changes, it is recommended to test the build:
 
 ```bash
 npm run build
 ```
 
-Se o build finalizar sem erro, o projeto está pronto para deploy.
+If the build completes without errors, the project is ready for deployment.
 
 ---
 
-## Primeiro acesso
+## First Access
 
-O primeiro usuário criado pela tela de cadastro será definido automaticamente como administrador, desde que a collection `users` ainda esteja vazia.
+The first user created through the registration screen is automatically assigned as an administrator, as long as the `users` collection is still empty.
 
-Os próximos usuários criados entram como solicitantes com acesso pendente, aguardando aprovação do administrador na tela:
+All other users created afterwards are registered as requesters with pending access, waiting for administrator approval on the following page:
 
 ```text
 /usuarios
@@ -138,102 +138,102 @@ Os próximos usuários criados entram como solicitantes com acesso pendente, agu
 
 ---
 
-## Seed opcional
+## Optional Seed
 
-O projeto possui um seed opcional para criar usuário administrador e dados de exemplo.
+The project includes an optional seed script to create an administrator user and sample demands.
 
-Execute:
+Run:
 
 ```bash
 npm run seed
 ```
 
-Variáveis opcionais para o seed:
+Optional seed variables:
 
 ```env
 SEED_ADMIN_EMAIL=admin@cadastro.local
-SEED_ADMIN_PASSWORD=troque-por-uma-senha-forte
+SEED_ADMIN_PASSWORD=replace-with-a-strong-password
 ```
 
-Recomenda-se usar o seed apenas em ambiente local ou ambiente de teste.
+The seed should preferably be used only in local or testing environments.
 
-Não utilize senhas fracas ou senhas de exemplo em produção.
+Do not use weak or example passwords in production.
 
 ---
 
-## Rotas principais
+## Main Routes
 
 ```text
 /login
 ```
 
-Tela de login e criação de acesso.
+Login and access creation page.
 
 ```text
 /nova-demanda
 ```
 
-Tela para cadastro de nova demanda.
+Page for creating a new demand.
 
 ```text
 /demandas
 ```
 
-Painel operacional para consulta e acompanhamento das demandas.
+Operational panel for searching, viewing, and tracking demands.
 
 ```text
 /admin
 ```
 
-Painel administrativo para edição, alteração de status, prioridade, responsável, conclusão, cancelamento e exclusão de demandas.
+Administrative dashboard for editing demands, changing status, setting priority, assigning responsible users, completing, canceling, and deleting demands.
 
 ```text
 /usuarios
 ```
 
-Tela de aprovação e gestão de usuários. Disponível apenas para administradores.
+User approval and management page. Available only to administrators.
 
 ---
 
-## Perfis de acesso
+## User Roles
 
-### Solicitante
+### Requester
 
-O usuário solicitante pode:
+A requester can:
 
-* Criar demandas
-* Visualizar demandas
-* Pesquisar demandas
-* Ver andamento
-* Ver histórico
-* Atualizar observações
-* Anexar documentos em demandas abertas
+* Create demands
+* View demands
+* Search demands
+* Track progress
+* View history
+* Update observations
+* Attach documents to open demands
 
-### Administrador
+### Administrator
 
-O usuário administrador pode:
+An administrator can:
 
-* Aprovar usuários
-* Alterar permissões
-* Editar demandas
-* Alterar status
-* Definir prioridade
-* Definir responsável
-* Concluir demandas
-* Cancelar demandas
-* Excluir demandas
-* Baixar documentos anexados
-* Visualizar painel administrativo
+* Approve users
+* Change user permissions
+* Edit demands
+* Change demand status
+* Set priority
+* Assign a responsible user
+* Complete demands
+* Cancel demands
+* Delete demands
+* Download attachments
+* Access the administrative dashboard
 
 ---
 
-## Documentos anexados
+## File Attachments
 
-Os arquivos enviados nas demandas são salvos no MongoDB Atlas via **GridFS**.
+Files uploaded to demands are stored in MongoDB Atlas using **GridFS**.
 
-Os anexos não são salvos no frontend e não são salvos no disco da Vercel.
+Attachments are not stored in the frontend and are not stored on Vercel disk storage.
 
-Formatos aceitos:
+Accepted file formats:
 
 ```text
 PDF
@@ -243,31 +243,31 @@ DOCX
 XLSX
 ```
 
-Limite atual:
+Current file size limit:
 
 ```text
-4 MB por arquivo
+4 MB per file
 ```
 
-Atenção: ao marcar uma demanda como **Concluída**, os anexos vinculados a essa demanda são apagados automaticamente.
+Important: when a demand is marked as **Completed**, all attachments linked to that demand are automatically deleted.
 
-Antes de concluir uma demanda, baixe e salve os documentos que precisam ser preservados.
+Before completing a demand, download and save any documents that must be preserved.
 
 ---
 
-## Publicação na Vercel
+## Deploying to Vercel
 
-1. Suba o projeto para um repositório Git.
-2. Acesse a Vercel.
-3. Clique em **Add New Project**.
-4. Importe o repositório.
-5. Configure as variáveis em:
+1. Push the project to a Git repository.
+2. Open Vercel.
+3. Click **Add New Project**.
+4. Import the repository.
+5. Configure the environment variables in:
 
 ```text
 Settings > Environment Variables
 ```
 
-Adicione:
+Add:
 
 ```env
 MONGODB_URI
@@ -275,37 +275,37 @@ NEXTAUTH_SECRET
 NEXT_PUBLIC_APP_URL
 ```
 
-6. Faça o deploy.
-7. Após o primeiro deploy, copie a URL gerada pela Vercel e atualize:
+6. Deploy the project.
+7. After the first deployment, copy the URL generated by Vercel and update:
 
 ```env
-NEXT_PUBLIC_APP_URL=https://sua-url.vercel.app
+NEXT_PUBLIC_APP_URL=https://your-url.vercel.app
 ```
 
-8. Faça um novo deploy após ajustar a variável.
+8. Redeploy the project after updating the variable.
 
 ---
 
-## Cuidados antes de deixar o repositório público
+## Before Making the Repository Public
 
-Antes de tornar o repositório público, verifique se não existem arquivos com informações sensíveis, como:
+Before changing the repository visibility to public, make sure it does not contain sensitive files or information, such as:
 
 ```text
 .env
 .env.local
 .env.production
 tokens
-senhas
-chaves de API
-credenciais do MongoDB
-dados reais de clientes
-documentos internos
-arquivos de banco de dados
+passwords
+API keys
+MongoDB credentials
+real client data
+internal documents
+database files
 ```
 
-Também confira se o `.gitignore` está bloqueando arquivos sensíveis.
+Also check that `.gitignore` is properly blocking sensitive files.
 
-Recomendado manter no `.gitignore`:
+Recommended `.gitignore` entries:
 
 ```gitignore
 .env
@@ -318,35 +318,35 @@ node_modules
 
 ---
 
-## Arquivo `.env.example`
+## `.env.example`
 
-É recomendável manter um arquivo `.env.example` no repositório para orientar a configuração do projeto, sem dados reais:
+It is recommended to keep a `.env.example` file in the repository to guide project configuration without exposing real credentials:
 
 ```env
-MONGODB_URI=mongodb+srv://USUARIO:SENHA@cluster0.xxxxx.mongodb.net/controle_demandas?retryWrites=true&w=majority&appName=Cluster0
-NEXTAUTH_SECRET=troque-por-uma-chave-grande-e-segura
+MONGODB_URI=mongodb+srv://USER:PASSWORD@cluster0.xxxxx.mongodb.net/controle_demandas?retryWrites=true&w=majority&appName=Cluster0
+NEXTAUTH_SECRET=replace-with-a-long-secure-secret
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 SEED_ADMIN_EMAIL=admin@cadastro.local
-SEED_ADMIN_PASSWORD=troque-por-uma-senha-forte
+SEED_ADMIN_PASSWORD=replace-with-a-strong-password
 ```
 
 ---
 
-## Segurança
+## Security Notes
 
-* Nunca exponha a string real do MongoDB no frontend.
-* Nunca envie `.env.local` para o GitHub.
-* Use senha forte para o banco de dados.
-* Use uma chave segura em `NEXTAUTH_SECRET`.
-* Revise os dados de exemplo antes de publicar o repositório.
-* Evite nomes reais de clientes nos arquivos de seed ou documentação pública.
-* Limite o acesso ao MongoDB Atlas sempre que possível.
+* Never expose the real MongoDB connection string in frontend code.
+* Never commit `.env.local` to GitHub.
+* Use a strong password for the database user.
+* Use a secure value for `NEXTAUTH_SECRET`.
+* Review all sample data before publishing the repository.
+* Avoid using real client names in seed files or public documentation.
+* Restrict MongoDB Atlas network access whenever possible.
 
 ---
 
-## Licença
+## License
 
-Projeto interno para controle operacional de demandas do setor de cadastro e legalização.
+Internal project for operational demand management in the registration and legalization department.
 
-Caso o repositório seja publicado, defina uma licença de uso conforme a política do responsável pelo projeto.
+If the repository is made public, define a license according to the project owner’s usage policy.
