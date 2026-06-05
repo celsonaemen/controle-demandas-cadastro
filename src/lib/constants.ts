@@ -48,6 +48,17 @@ export const SERVICE_TYPES: ServiceType[] = [
   "Corpo de Bombeiros",
   "Consulta de débitos",
   "Cadastro interno",
+  "Alteração de dados no WPHD",
+  "Inserção de dados no WPHD",
+  "Ativação de empresa no WPHD",
+  "Desativação de empresa no WPHD",
+  "Inclusão de documentos no Scan",
+  "Atualização cadastral de empresa",
+  "Atualização cadastral de sócio",
+  "Correção de cadastro interno",
+  "Cadastro de nova empresa no WPHD",
+  "Cadastro de filial no WPHD",
+  "Conferência cadastral",
   "Outro"
 ];
 
