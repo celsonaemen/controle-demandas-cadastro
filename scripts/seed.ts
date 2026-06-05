@@ -1,10 +1,13 @@
-import "dotenv/config";
+import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
 import { connectMongo } from "../src/lib/mongodb";
 import { buildOperationalSummary, emptyFlags } from "../src/lib/demand-utils";
 import { DemandModel } from "../src/models/Demand";
 import { DemandHistoryModel } from "../src/models/DemandHistory";
 import { UserModel } from "../src/models/User";
+
+dotenv.config({ path: ".env.local" });
+dotenv.config();
 
 function addDays(days: number) {
   const date = new Date();
@@ -65,7 +68,7 @@ async function main() {
         tipoServico: "Abertura de empresa",
         orgaoEnvolvido: "JUCEMG, REDESIM, Prefeitura",
         status: "Recebida",
-        prioridade: "Média",
+        prioridade: "Normal",
         responsavel: "",
         prazo: addDays(12),
         objetivo: "Abertura de empresa para consultório optométrico.",

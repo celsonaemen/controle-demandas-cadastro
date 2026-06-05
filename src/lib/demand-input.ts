@@ -25,7 +25,7 @@ export function normalizeDemandInput(raw: RawDemandInput, canManage: boolean) {
     tipoServico: option(raw.tipoServico, SERVICE_TYPES, "Outro") as ServiceType,
     orgaoEnvolvido: text(raw.orgaoEnvolvido),
     status: canManage ? option(raw.status, STATUS_OPTIONS, "Recebida") as DemandStatus : "Recebida" as DemandStatus,
-    prioridade: canManage ? option(raw.prioridade, PRIORITY_OPTIONS, "Média") as DemandPriority : "Média" as DemandPriority,
+    prioridade: option(raw.prioridade, PRIORITY_OPTIONS, "Normal") as DemandPriority,
     responsavel: canManage ? text(raw.responsavel) : "",
     prazo: text(raw.prazo),
     objetivo: text(raw.objetivo),

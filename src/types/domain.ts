@@ -11,7 +11,7 @@ export type DemandStatus =
   | "Concluída"
   | "Cancelada";
 
-export type DemandPriority = "Alta" | "Média" | "Baixa";
+export type DemandPriority = "Alta" | "Média" | "Normal" | "Baixa";
 
 export type ServiceType =
   | "Abertura de empresa"
@@ -19,6 +19,7 @@ export type ServiceType =
   | "Baixa de empresa"
   | "Alteração de endereço"
   | "Alteração de sócio"
+  | "Alteração de dados de sócios"
   | "Alteração de CNAE"
   | "Alteração de capital"
   | "Transformação empresarial"

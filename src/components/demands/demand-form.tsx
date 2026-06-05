@@ -29,7 +29,7 @@ const initialValues: DemandFormValues = {
   tipoServico: "Abertura de empresa",
   orgaoEnvolvido: "",
   status: "Recebida",
-  prioridade: "Média",
+  prioridade: "Normal",
   responsavel: "",
   prazo: "",
   objetivo: "",
@@ -209,7 +209,7 @@ export function DemandForm({ user, demandId }: DemandFormProps) {
             </Select>
           </Field>
           <Field label="Prioridade">
-            <Select value={values.prioridade} onChange={(event) => updateField("prioridade", event.target.value as DemandFormValues["prioridade"])} disabled={!isAdmin}>
+            <Select value={values.prioridade} onChange={(event) => updateField("prioridade", event.target.value as DemandFormValues["prioridade"])}>
               {PRIORITY_OPTIONS.map((priority) => <option key={priority} value={priority}>{priority}</option>)}
             </Select>
           </Field>
@@ -233,7 +233,7 @@ export function DemandForm({ user, demandId }: DemandFormProps) {
           <Field label="Observações">
             <Textarea value={values.observacoes} onChange={(event) => updateField("observacoes", event.target.value)} />
           </Field>
-          <Field label="Documentos pendentes">
+          <Field label="Documentos">
             <Textarea value={values.documentosPendentes} onChange={(event) => updateField("documentosPendentes", event.target.value)} disabled={isEditing && !isAdmin} />
           </Field>
         </CardContent>

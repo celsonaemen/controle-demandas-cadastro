@@ -462,7 +462,7 @@ function DetailsModal({
             <Info label="Objetivo" value={demand.objetivo} wide />
             <Info label="Próxima ação" value={demand.proximaAcao} wide />
             <Info label="Observações" value={demand.observacoes || "-"} wide />
-            <Info label="Documentos pendentes" value={demand.documentosPendentes || "-"} wide />
+            <Info label="Documentos" value={demand.documentosPendentes || "-"} wide />
           </div>
           <Card>
             <CardHeader>
@@ -523,7 +523,7 @@ function StatusBadge({ status }: { status: DemandStatus }) {
 }
 
 function PriorityBadge({ priority }: { priority: Demand["prioridade"] }) {
-  const tone = priority === "Alta" ? "red" : priority === "Baixa" ? "green" : "yellow";
+  const tone = priority === "Alta" ? "red" : priority === "Baixa" ? "green" : priority === "Normal" ? "blue" : "yellow";
   return <Badge tone={tone}>{priority}</Badge>;
 }
 

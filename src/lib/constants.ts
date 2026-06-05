@@ -25,7 +25,7 @@ export const KANBAN_STATUSES: DemandStatus[] = [
   "Concluída"
 ];
 
-export const PRIORITY_OPTIONS: DemandPriority[] = ["Alta", "Média", "Baixa"];
+export const PRIORITY_OPTIONS: DemandPriority[] = ["Alta", "Média", "Normal", "Baixa"];
 
 export const SERVICE_TYPES: ServiceType[] = [
   "Abertura de empresa",
@@ -33,6 +33,7 @@ export const SERVICE_TYPES: ServiceType[] = [
   "Baixa de empresa",
   "Alteração de endereço",
   "Alteração de sócio",
+  "Alteração de dados de sócios",
   "Alteração de CNAE",
   "Alteração de capital",
   "Transformação empresarial",

@@ -17,7 +17,7 @@ export function buildOperationalSummary(input: Partial<DemandFormValues> & { res
     `PRAZO: ${input.prazo || "-"}`,
     `RESPONSÁVEL: ${input.responsavel || "-"}`,
     `PRÓXIMA AÇÃO: ${input.proximaAcao || "-"}`,
-    `PENDÊNCIAS: ${input.documentosPendentes || "-"}`
+    `DOCUMENTOS: ${input.documentosPendentes || "-"}`
   ].join("\n");
 }
 
