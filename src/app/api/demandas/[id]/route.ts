@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { deleteDemandAttachments } from "@/lib/attachments";
 import { getSession, isAdmin } from "@/lib/auth";
 import { normalizeAdminDemandInput, statusDates, validateDemandPayload } from "@/lib/demand-input";
 import { logDemandHistory } from "@/lib/history";
@@ -79,6 +80,17 @@ export async function PATCH(request: Request, context: RouteContext) {
     depois: after
   });
 
+  if (payload.status === "Concluída") {
+    const deletedFiles = await deleteDemandAttachments(id);
+    if (deletedFiles > 0) {
+      await logDemandHistory({
+        demandaId: id,
+        user,
+        acao: `${deletedFiles} arquivo(s) apagado(s) automaticamente ao concluir demanda`
+      });
+    }
+  }
+
   return NextResponse.json({ demanda: after });
 }
 
@@ -96,6 +108,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
   }
 
   const before = serializeDemand(current.toObject());
+  await deleteDemandAttachments(id);
   await current.deleteOne();
   await logDemandHistory({
     demandaId: id,

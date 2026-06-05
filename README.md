@@ -86,6 +86,7 @@ Solicitante:
 - Pesquisa demandas
 - Ver andamento e histórico
 - Atualiza observações
+- Anexa documentos em demandas abertas
 
 Admin:
 
@@ -96,6 +97,23 @@ Admin:
 - Conclui
 - Cancela
 - Exclui
+- Baixa documentos anexados
+
+## Documentos anexados
+
+Arquivos enviados na demanda são salvos no MongoDB Atlas via GridFS, não no frontend e não no disco da Vercel.
+
+Formatos aceitos:
+
+- PDF
+- JPG
+- PNG
+- DOCX
+- XLSX
+
+Limite atual: 4 MB por arquivo.
+
+Ao marcar uma demanda como `Concluída`, os anexos dessa demanda são apagados automaticamente. Baixe e salve os documentos necessários antes de concluir.
 
 ## Publicar na Vercel
 

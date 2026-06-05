@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { deleteDemandAttachments } from "@/lib/attachments";
 import { getSession, isAdmin } from "@/lib/auth";
 import { STATUS_OPTIONS } from "@/lib/constants";
 import { statusDates } from "@/lib/demand-input";
@@ -45,6 +46,17 @@ export async function PATCH(request: Request, context: RouteContext) {
     antes: before,
     depois: after
   });
+
+  if (status === "Concluída") {
+    const deletedFiles = await deleteDemandAttachments(id);
+    if (deletedFiles > 0) {
+      await logDemandHistory({
+        demandaId: id,
+        user,
+        acao: `${deletedFiles} arquivo(s) apagado(s) automaticamente ao concluir demanda`
+      });
+    }
+  }
 
   return NextResponse.json({ demanda: after });
 }

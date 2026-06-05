@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, Clipboard, Eye, Loader2, Pencil, Trash2 } from "lucide-react";
+import { CheckCircle2, Clipboard, Download, Eye, FileText, Loader2, Pencil, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -12,7 +12,7 @@ import { Select } from "@/components/ui/select";
 import { PRIORITY_OPTIONS, SERVICE_TYPES, STATUS_OPTIONS } from "@/lib/constants";
 import { cn, daysUntil, formatDate, formatDateTime, normalizeSearch } from "@/lib/utils";
 import type { SessionUser } from "@/lib/session";
-import type { Demand, DemandFilters, DemandHistory, DemandStatus } from "@/types/domain";
+import type { Demand, DemandAttachment, DemandFilters, DemandHistory, DemandStatus } from "@/types/domain";
 
 type DemandsWorkspaceProps = {
   user: SessionUser;
@@ -38,6 +38,7 @@ export function DemandsWorkspace({ user, adminMode = false }: DemandsWorkspacePr
   const [error, setError] = useState("");
   const [selected, setSelected] = useState<Demand | null>(null);
   const [history, setHistory] = useState<DemandHistory[]>([]);
+  const [attachments, setAttachments] = useState<DemandAttachment[]>([]);
   const [draggingId, setDraggingId] = useState<string>("");
 
   useEffect(() => {
@@ -72,10 +73,20 @@ export function DemandsWorkspace({ user, adminMode = false }: DemandsWorkspacePr
   async function openDetails(demand: Demand) {
     setSelected(demand);
     setHistory([]);
-    const response = await fetch(`/api/demandas/${demand.id}/historico`);
-    const data = await response.json().catch(() => ({}));
-    if (response.ok) {
-      setHistory(data.historico || []);
+    setAttachments([]);
+    const [historyResponse, attachmentsResponse] = await Promise.all([
+      fetch(`/api/demandas/${demand.id}/historico`),
+      fetch(`/api/demandas/${demand.id}/arquivos`)
+    ]);
+
+    const historyData = await historyResponse.json().catch(() => ({}));
+    if (historyResponse.ok) {
+      setHistory(historyData.historico || []);
+    }
+
+    const attachmentsData = await attachmentsResponse.json().catch(() => ({}));
+    if (attachmentsResponse.ok) {
+      setAttachments(attachmentsData.arquivos || []);
     }
   }
 
@@ -252,6 +263,7 @@ export function DemandsWorkspace({ user, adminMode = false }: DemandsWorkspacePr
         <DetailsModal
           demand={selected}
           history={history}
+          attachments={attachments}
           user={user}
           adminMode={adminMode}
           onClose={() => setSelected(null)}
@@ -443,11 +455,13 @@ function KanbanBoard({
 function DetailsModal({
   demand,
   history,
+  attachments,
   adminMode,
   onClose
 }: {
   demand: Demand;
   history: DemandHistory[];
+  attachments: DemandAttachment[];
   user: SessionUser;
   adminMode: boolean;
   onClose: () => void;
@@ -478,6 +492,35 @@ function DetailsModal({
             <Info label="Observações" value={demand.observacoes || "-"} wide />
             <Info label="Documentos" value={demand.documentosPendentes || "-"} wide />
           </div>
+          <Card>
+            <CardHeader>
+              <h4 className="font-bold text-slate-950">Arquivos anexados</h4>
+            </CardHeader>
+            <CardContent className="grid gap-3">
+              {attachments.length === 0 && (
+                <p className="text-sm font-semibold text-slate-500">
+                  Nenhum arquivo anexado. Ao concluir a demanda, os arquivos existentes são apagados automaticamente.
+                </p>
+              )}
+              {attachments.map((file) => (
+                <div key={file.id} className="flex flex-wrap items-center gap-3 rounded-md border border-slate-200 bg-slate-50 p-3">
+                  <FileText className="h-5 w-5 text-primary" />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-bold text-slate-950">{file.nome}</p>
+                    <p className="text-xs font-semibold text-slate-500">
+                      {(file.tamanho / 1024 / 1024).toFixed(2)} MB - enviado por {file.enviadoPorNome || "-"} em {formatDateTime(file.createdAt)}
+                    </p>
+                  </div>
+                  <a href={`/api/demandas/${demand.id}/arquivos/${file.id}`} target="_blank" rel="noreferrer">
+                    <Button type="button" size="sm" variant="secondary">
+                      <Download className="h-3.5 w-3.5" />
+                      Baixar
+                    </Button>
+                  </a>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
           <Card>
             <CardHeader>
               <h4 className="font-bold text-slate-950">Histórico</h4>

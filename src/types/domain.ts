@@ -107,6 +107,17 @@ export type DemandHistory = {
   createdAt: string;
 };
 
+export type DemandAttachment = {
+  id: string;
+  demandaId: string;
+  nome: string;
+  tipo: string;
+  tamanho: number;
+  enviadoPor: string;
+  enviadoPorNome: string;
+  createdAt: string;
+};
+
 export type DemandFormValues = {
   empresa: string;
   cnpjCpf: string;

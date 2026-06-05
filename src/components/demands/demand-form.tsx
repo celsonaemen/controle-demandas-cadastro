@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Save } from "lucide-react";
+import { FileText, Loader2, Save, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -14,6 +14,9 @@ import { LEGALIZATION_FLAGS, PRIORITY_OPTIONS, SERVICE_TYPES, STATUS_OPTIONS } f
 import { emptyFlags } from "@/lib/demand-utils";
 import type { SessionUser } from "@/lib/session";
 import type { Demand, DemandFormValues, LegalizationFlags } from "@/types/domain";
+
+const ATTACHMENT_ACCEPT = ".pdf,.jpg,.jpeg,.png,.docx,.xlsx";
+const MAX_ATTACHMENT_SIZE_MB = 4;
 
 type DemandFormProps = {
   user: SessionUser;
@@ -51,6 +54,7 @@ export function DemandForm({ user, demandId }: DemandFormProps) {
   const [loading, setLoading] = useState(Boolean(demandId));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const title = useMemo(() => {
     if (isEditing) return "Editar demanda";
@@ -132,15 +136,48 @@ export function DemandForm({ user, demandId }: DemandFormProps) {
     });
 
     const data = await response.json().catch(() => ({}));
-    setSaving(false);
 
     if (!response.ok) {
+      setSaving(false);
       setError(data.error || "Não foi possível salvar.");
       return;
     }
 
+    const savedDemand = data.demanda as Demand;
+    if (selectedFiles.length > 0) {
+      const formData = new FormData();
+      selectedFiles.forEach((file) => formData.append("files", file));
+
+      const uploadResponse = await fetch(`/api/demandas/${savedDemand.id}/arquivos`, {
+        method: "POST",
+        body: formData
+      });
+      const uploadData = await uploadResponse.json().catch(() => ({}));
+
+      if (!uploadResponse.ok) {
+        setSaving(false);
+        setError(uploadData.error || "Demanda salva, mas não foi possível anexar os arquivos.");
+        if (!demandId) {
+          router.replace(`/nova-demanda?id=${savedDemand.id}`);
+        }
+        return;
+      }
+    }
+
+    setSaving(false);
     router.push(isAdmin ? "/admin" : "/demandas");
     router.refresh();
+  }
+
+  function selectFiles(fileList: FileList | null) {
+    const files = Array.from(fileList || []);
+    const oversized = files.find((file) => file.size > MAX_ATTACHMENT_SIZE_MB * 1024 * 1024);
+    if (oversized) {
+      setError(`O arquivo "${oversized.name}" excede o limite de ${MAX_ATTACHMENT_SIZE_MB} MB.`);
+      return;
+    }
+    setError("");
+    setSelectedFiles(files);
   }
 
   if (loading) {
@@ -235,6 +272,35 @@ export function DemandForm({ user, demandId }: DemandFormProps) {
           </Field>
           <Field label="Documentos">
             <Textarea value={values.documentosPendentes} onChange={(event) => updateField("documentosPendentes", event.target.value)} disabled={isEditing && !isAdmin} />
+          </Field>
+          <Field label="Anexar documentos">
+            <div className="grid gap-3 rounded-md border border-dashed border-slate-300 bg-slate-50 p-3">
+              <label className="flex min-h-16 cursor-pointer flex-col items-center justify-center gap-2 rounded-md bg-white px-3 py-4 text-center text-sm font-semibold text-slate-700 hover:bg-emerald-50">
+                <Upload className="h-5 w-5 text-primary" />
+                <span>Selecionar PDF, foto ou arquivo</span>
+                <input
+                  className="hidden"
+                  type="file"
+                  multiple
+                  accept={ATTACHMENT_ACCEPT}
+                  onChange={(event) => selectFiles(event.target.files)}
+                />
+              </label>
+              <p className="text-xs font-semibold text-slate-500">
+                Aceita PDF, JPG, PNG, DOCX e XLSX. Limite de {MAX_ATTACHMENT_SIZE_MB} MB por arquivo.
+              </p>
+              {selectedFiles.length > 0 && (
+                <div className="grid gap-2">
+                  {selectedFiles.map((file) => (
+                    <div key={`${file.name}-${file.size}`} className="flex items-center gap-2 rounded-md bg-white px-2 py-1.5 text-xs font-semibold text-slate-700">
+                      <FileText className="h-4 w-4 text-primary" />
+                      <span className="min-w-0 flex-1 truncate">{file.name}</span>
+                      <span>{(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </Field>
         </CardContent>
       </Card>
