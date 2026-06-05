@@ -1,16 +1,16 @@
 import { redirect } from "next/navigation";
-import { DemandsWorkspace } from "@/components/demands/demands-workspace";
+import { UsersAdmin } from "@/components/admin/users-admin";
 import { AppShell } from "@/components/layout/app-shell";
 import { getSession } from "@/lib/auth";
 
-export default async function AdminPage() {
+export default async function UsuariosPage() {
   const user = await getSession();
   if (!user) redirect("/login");
   if (user.role !== "admin") redirect("/demandas");
 
   return (
     <AppShell user={user}>
-      <DemandsWorkspace user={user} adminMode />
+      <UsersAdmin currentUser={user} />
     </AppShell>
   );
 }

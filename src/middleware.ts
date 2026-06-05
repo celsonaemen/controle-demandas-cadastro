@@ -10,7 +10,8 @@ export async function middleware(request: NextRequest) {
   const isProtected =
     pathname.startsWith("/demandas") ||
     pathname.startsWith("/nova-demanda") ||
-    pathname.startsWith("/admin");
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/usuarios");
 
   if (isLogin && session) {
     return NextResponse.redirect(new URL("/demandas", request.url));
@@ -22,7 +23,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (pathname.startsWith("/admin") && session?.role !== "admin") {
+  if ((pathname.startsWith("/admin") || pathname.startsWith("/usuarios")) && session?.role !== "admin") {
     return NextResponse.redirect(new URL("/demandas", request.url));
   }
 

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { KanbanSquare, LogOut, Plus, ShieldCheck } from "lucide-react";
+import { KanbanSquare, LogOut, Plus, ShieldCheck, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn, getInitials } from "@/lib/utils";
 import type { SessionUser } from "@/lib/session";
@@ -15,7 +15,8 @@ type AppShellProps = {
 const navItems = [
   { href: "/demandas", label: "Demandas", icon: KanbanSquare, admin: false },
   { href: "/nova-demanda", label: "Nova demanda", icon: Plus, admin: false },
-  { href: "/admin", label: "Admin", icon: ShieldCheck, admin: true }
+  { href: "/admin", label: "Admin", icon: ShieldCheck, admin: true },
+  { href: "/usuarios", label: "Usuários", icon: Users, admin: true }
 ];
 
 export function AppShell({ user, children }: AppShellProps) {
