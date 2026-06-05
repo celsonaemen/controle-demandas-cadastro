@@ -11,19 +11,27 @@ export async function POST(request: Request) {
   const password = String(body.password || "");
 
   if (!email || !password) {
-    return NextResponse.json({ error: "E-mail e senha são obrigatórios." }, { status: 400 });
+    return NextResponse.json({ error: "E-mail e senha sao obrigatorios." }, { status: 400 });
   }
 
   await connectMongo();
 
   const user = await UserModel.findOne({ email }).select("+passwordHash");
   if (!user || !user.passwordHash) {
-    return NextResponse.json({ error: "Credenciais inválidas." }, { status: 401 });
+    return NextResponse.json({ error: "Credenciais invalidas." }, { status: 401 });
   }
 
   const passwordMatches = await bcrypt.compare(password, user.passwordHash);
-  if (!passwordMatches || !user.ativo) {
-    return NextResponse.json({ error: "Credenciais inválidas." }, { status: 401 });
+  if (!passwordMatches) {
+    return NextResponse.json({ error: "Credenciais invalidas." }, { status: 401 });
+  }
+
+  if (user.statusAcesso === "pendente") {
+    return NextResponse.json({ error: "Seu acesso ainda aguarda aprovacao do administrador." }, { status: 403 });
+  }
+
+  if (user.statusAcesso === "rejeitado" || !user.ativo) {
+    return NextResponse.json({ error: "Seu acesso nao esta ativo. Fale com o administrador." }, { status: 403 });
   }
 
   const serialized = serializeUser(user.toObject());

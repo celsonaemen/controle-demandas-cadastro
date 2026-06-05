@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, LogIn, UserPlus } from "lucide-react";
+import { CheckCircle2, Loader2, LogIn, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -20,11 +20,13 @@ export function LoginForm({ nextPath }: LoginFormProps) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [accessRequested, setAccessRequested] = useState(false);
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
     setError("");
+    setAccessRequested(false);
 
     const response = await fetch(mode === "login" ? "/api/auth/login" : "/api/auth/register", {
       method: "POST",
@@ -37,6 +39,14 @@ export function LoginForm({ nextPath }: LoginFormProps) {
 
     if (!response.ok) {
       setError(data.error || "Não foi possível autenticar.");
+      return;
+    }
+
+    if (mode === "register" && data.pending) {
+      setAccessRequested(true);
+      setMode("login");
+      setNome("");
+      setPassword("");
       return;
     }
 
@@ -64,43 +74,59 @@ export function LoginForm({ nextPath }: LoginFormProps) {
           </p>
         </div>
 
-        <Card className="border-white/20 bg-white/95 shadow-panel backdrop-blur">
+        <Card className="border-white/30 bg-white/15 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-2xl">
           <CardContent className="p-5">
             <div className="mb-5 lg:hidden">
-              <img src="/brand/logoalmenara.png" alt="Almenara" className="h-14 w-auto" />
+              <img src="/brand/logoalmenara.png" alt="Almenara" className="h-14 w-auto rounded-md bg-white/85 p-2" />
             </div>
             <div className="mb-5">
-              <p className="text-sm font-bold uppercase text-slate-500">Setor de Cadastro</p>
-              <h2 className="mt-1 text-2xl font-extrabold text-slate-950">Controle de Demandas</h2>
+              <p className="text-sm font-bold uppercase text-[#e0bd62]">Setor de Cadastro</p>
+              <h2 className="mt-1 text-2xl font-extrabold text-white">Controle de Demandas</h2>
             </div>
-            <div className="mb-5 flex rounded-md bg-slate-100 p-1">
+            <div className="mb-5 flex rounded-md border border-white/25 bg-white/15 p-1">
               <button
                 type="button"
-                className={`min-h-9 flex-1 rounded-md text-sm font-bold ${mode === "login" ? "bg-white text-primary shadow-sm" : "text-slate-600"}`}
-                onClick={() => setMode("login")}
+                className={`min-h-9 flex-1 rounded-md text-sm font-bold ${mode === "login" ? "bg-white/90 text-primary shadow-sm" : "text-white/80"}`}
+                onClick={() => {
+                  setMode("login");
+                  setAccessRequested(false);
+                }}
               >
                 Entrar
               </button>
               <button
                 type="button"
-                className={`min-h-9 flex-1 rounded-md text-sm font-bold ${mode === "register" ? "bg-white text-primary shadow-sm" : "text-slate-600"}`}
-                onClick={() => setMode("register")}
+                className={`min-h-9 flex-1 rounded-md text-sm font-bold ${mode === "register" ? "bg-white/90 text-primary shadow-sm" : "text-white/80"}`}
+                onClick={() => {
+                  setMode("register");
+                  setAccessRequested(false);
+                }}
               >
                 Criar acesso
               </button>
             </div>
 
+            {accessRequested && (
+              <div className="mb-5 rounded-md border border-emerald-200/70 bg-emerald-50/90 px-3 py-3 text-sm font-semibold text-emerald-800">
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+                  <p>Sua solicitacao de acesso foi enviada ao administrador. Aguarde a aprovacao e depois faca login.</p>
+                </div>
+              </div>
+            )}
+
             <form className="grid gap-4" onSubmit={submit}>
               {mode === "register" && (
                 <div className="grid gap-2">
-                  <Label htmlFor="nome">Nome</Label>
-                  <Input id="nome" value={nome} onChange={(event) => setNome(event.target.value)} required />
+                  <Label className="text-white/90" htmlFor="nome">Nome</Label>
+                  <Input className="border-white/40 bg-white/85" id="nome" value={nome} onChange={(event) => setNome(event.target.value)} required />
                 </div>
               )}
 
               <div className="grid gap-2">
-                <Label htmlFor="email">E-mail</Label>
+                <Label className="text-white/90" htmlFor="email">E-mail</Label>
                 <Input
+                  className="border-white/40 bg-white/85"
                   id="email"
                   type="email"
                   value={email}
@@ -110,8 +136,9 @@ export function LoginForm({ nextPath }: LoginFormProps) {
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="password">Senha</Label>
+                <Label className="text-white/90" htmlFor="password">Senha</Label>
                 <Input
+                  className="border-white/40 bg-white/85"
                   id="password"
                   type="password"
                   value={password}

@@ -5,6 +5,12 @@ import { connectMongo } from "@/lib/mongodb";
 import { serializeUser } from "@/lib/serializers";
 import { UserModel } from "@/models/User";
 
+function getClientIp(request: Request) {
+  const forwarded = request.headers.get("x-forwarded-for") || "";
+  const firstForwarded = forwarded.split(",")[0]?.trim();
+  return firstForwarded || request.headers.get("x-real-ip") || "nao informado";
+}
+
 export async function POST(request: Request) {
   const body = await request.json().catch(() => ({}));
   const nome = String(body.nome || "").trim();
@@ -27,7 +33,8 @@ export async function POST(request: Request) {
   }
 
   const totalUsers = await UserModel.estimatedDocumentCount();
-  const role = totalUsers === 0 ? "admin" : "solicitante";
+  const isFirstUser = totalUsers === 0;
+  const role = isFirstUser ? "admin" : "solicitante";
   const passwordHash = await bcrypt.hash(password, 10);
 
   const user = await UserModel.create({
@@ -35,10 +42,23 @@ export async function POST(request: Request) {
     email,
     passwordHash,
     role,
-    ativo: true
+    ativo: isFirstUser,
+    statusAcesso: isFirstUser ? "aprovado" : "pendente",
+    cadastroIp: getClientIp(request),
+    cadastroUserAgent: request.headers.get("user-agent") || "",
+    aprovadoEm: isFirstUser ? new Date() : null,
+    aprovadoPorNome: isFirstUser ? "Primeiro acesso" : ""
   });
 
   const serialized = serializeUser(user.toObject());
+  if (!isFirstUser) {
+    return NextResponse.json({
+      user: serialized,
+      pending: true,
+      message: "Sua solicitacao de acesso foi enviada ao administrador. Aguarde a aprovacao e depois faca login."
+    }, { status: 201 });
+  }
+
   await setSession({
     id: serialized.id,
     nome: serialized.nome,

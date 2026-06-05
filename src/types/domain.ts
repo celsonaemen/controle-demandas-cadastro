@@ -1,4 +1,5 @@
 export type UserRole = "solicitante" | "admin";
+export type UserAccessStatus = "pendente" | "aprovado" | "rejeitado";
 
 export type DemandStatus =
   | "Recebida"
@@ -53,6 +54,11 @@ export type User = {
   email: string;
   role: UserRole;
   ativo: boolean;
+  statusAcesso: UserAccessStatus;
+  cadastroIp: string;
+  cadastroUserAgent: string;
+  aprovadoEm: string | null;
+  aprovadoPorNome: string;
   createdAt: string;
   updatedAt: string;
 };

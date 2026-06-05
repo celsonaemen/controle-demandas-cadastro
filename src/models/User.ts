@@ -6,7 +6,13 @@ const UserSchema = new Schema(
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     passwordHash: { type: String, required: true, select: false },
     role: { type: String, enum: ["solicitante", "admin"], default: "solicitante", index: true },
-    ativo: { type: Boolean, default: true }
+    ativo: { type: Boolean, default: true },
+    statusAcesso: { type: String, enum: ["pendente", "aprovado", "rejeitado"], default: "pendente", index: true },
+    cadastroIp: { type: String, default: "", trim: true },
+    cadastroUserAgent: { type: String, default: "", trim: true },
+    aprovadoEm: { type: Date, default: null },
+    aprovadoPor: { type: Schema.Types.ObjectId, ref: "User", default: null },
+    aprovadoPorNome: { type: String, default: "", trim: true }
   },
   {
     collection: "users",

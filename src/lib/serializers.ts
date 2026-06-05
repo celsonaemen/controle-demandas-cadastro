@@ -15,12 +15,25 @@ function id(value: unknown) {
 }
 
 export function serializeUser(record: Record<string, unknown>): User {
+  const statusAcesso = record.statusAcesso === "rejeitado"
+    ? "rejeitado"
+    : record.statusAcesso === "pendente"
+      ? "pendente"
+      : Boolean(record.ativo)
+        ? "aprovado"
+        : "pendente";
+
   return {
     id: id(record._id),
     nome: String(record.nome || ""),
     email: String(record.email || ""),
     role: record.role === "admin" ? "admin" : "solicitante",
     ativo: Boolean(record.ativo),
+    statusAcesso,
+    cadastroIp: String(record.cadastroIp || ""),
+    cadastroUserAgent: String(record.cadastroUserAgent || ""),
+    aprovadoEm: dateTime(record.aprovadoEm),
+    aprovadoPorNome: String(record.aprovadoPorNome || ""),
     createdAt: String(dateTime(record.createdAt) || ""),
     updatedAt: String(dateTime(record.updatedAt) || "")
   };

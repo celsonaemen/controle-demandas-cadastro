@@ -53,7 +53,7 @@ Acesse:
 http://localhost:3000/login
 ```
 
-O primeiro usuário criado pela tela de cadastro vira `admin` automaticamente. Os próximos usuários entram como `solicitante`.
+O primeiro usuário criado pela tela de cadastro vira `admin` automaticamente. Os próximos usuários entram como `solicitante` com acesso pendente, aguardando aprovação do administrador na tela `/usuarios`.
 
 ## Seed opcional
 
@@ -76,6 +76,7 @@ SEED_ADMIN_PASSWORD=Admin123456!
 - `/nova-demanda`: cadastro de demanda
 - `/demandas`: painel operacional para solicitantes e admins
 - `/admin`: painel administrativo com edição, status, conclusão e exclusão
+- `/usuarios`: aprovação e gestão de usuários, apenas para admins
 
 ## Permissões
 
