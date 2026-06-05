@@ -10,7 +10,7 @@ type HistoryInput = {
 };
 
 export async function logDemandHistory(input: HistoryInput) {
-  await DemandHistoryModel.create({
+  return DemandHistoryModel.create({
     demandaId: input.demandaId,
     usuarioId: input.user.id,
     usuarioNome: input.user.nome,

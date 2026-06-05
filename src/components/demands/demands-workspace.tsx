@@ -2,13 +2,14 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, Clipboard, Download, Eye, FileText, Loader2, Pencil, Trash2 } from "lucide-react";
+import { CheckCircle2, Clipboard, Download, Eye, FileText, Loader2, MessageSquare, Pencil, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { PRIORITY_OPTIONS, SERVICE_TYPES, STATUS_OPTIONS } from "@/lib/constants";
 import { cn, daysUntil, formatDate, formatDateTime, normalizeSearch } from "@/lib/utils";
 import type { SessionUser } from "@/lib/session";
@@ -266,6 +267,8 @@ export function DemandsWorkspace({ user, adminMode = false }: DemandsWorkspacePr
           attachments={attachments}
           user={user}
           adminMode={adminMode}
+          onHistoryAdded={(item) => setHistory((current) => [item, ...current])}
+          onProgressSaved={() => loadDemands({ silent: true })}
           onClose={() => setSelected(null)}
         />
       )}
@@ -457,6 +460,8 @@ function DetailsModal({
   history,
   attachments,
   adminMode,
+  onHistoryAdded,
+  onProgressSaved,
   onClose
 }: {
   demand: Demand;
@@ -464,8 +469,44 @@ function DetailsModal({
   attachments: DemandAttachment[];
   user: SessionUser;
   adminMode: boolean;
+  onHistoryAdded: (item: DemandHistory) => void;
+  onProgressSaved: () => void;
   onClose: () => void;
 }) {
+  const [internalProgress, setInternalProgress] = useState("");
+  const [progressSaving, setProgressSaving] = useState(false);
+  const [progressError, setProgressError] = useState("");
+
+  async function saveInternalProgress() {
+    const comentario = internalProgress.trim();
+    if (!comentario) {
+      setProgressError("Informe o andamento antes de salvar.");
+      return;
+    }
+
+    setProgressSaving(true);
+    setProgressError("");
+
+    const response = await fetch(`/api/demandas/${demand.id}/historico`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ comentario })
+    });
+    const data = await response.json().catch(() => ({}));
+    setProgressSaving(false);
+
+    if (!response.ok) {
+      setProgressError(data.error || "Nao foi possivel registrar o andamento.");
+      return;
+    }
+
+    if (data.historico) {
+      onHistoryAdded(data.historico);
+    }
+    setInternalProgress("");
+    onProgressSaved();
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-slate-950/40">
       <aside className="h-full w-full max-w-3xl overflow-y-auto bg-white shadow-panel">
@@ -521,18 +562,61 @@ function DetailsModal({
               ))}
             </CardContent>
           </Card>
+          {adminMode && (
+            <Card>
+              <CardHeader>
+                <div>
+                  <h4 className="flex items-center gap-2 font-bold text-slate-950">
+                    <MessageSquare className="h-5 w-5 text-primary" />
+                    Andamento interno
+                  </h4>
+                  <p className="mt-1 text-sm font-semibold text-slate-500">
+                    Visivel somente para administradores/executores.
+                  </p>
+                </div>
+              </CardHeader>
+              <CardContent className="grid gap-3">
+                {progressError && (
+                  <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+                    {progressError}
+                  </div>
+                )}
+                <Textarea
+                  maxLength={2000}
+                  placeholder="Registre o que foi feito, retorno do cliente, pendencia interna, protocolo consultado ou proxima tratativa."
+                  value={internalProgress}
+                  onChange={(event) => setInternalProgress(event.target.value)}
+                />
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <span className="text-xs font-semibold text-slate-500">
+                    {internalProgress.trim().length}/2000 caracteres
+                  </span>
+                  <Button type="button" onClick={saveInternalProgress} disabled={progressSaving}>
+                    {progressSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageSquare className="h-4 w-4" />}
+                    Salvar andamento
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
           <Card>
             <CardHeader>
               <h4 className="font-bold text-slate-950">Histórico</h4>
             </CardHeader>
             <CardContent className="grid gap-3">
               {history.length === 0 && <p className="text-sm font-semibold text-slate-500">Sem histórico registrado.</p>}
-              {history.map((item) => (
-                <div key={item.id} className="rounded-md border border-slate-200 bg-slate-50 p-3">
-                  <p className="text-sm font-bold text-slate-950">{item.acao}</p>
-                  <p className="text-xs font-semibold text-slate-500">{formatDateTime(item.createdAt)} - {item.usuarioNome}</p>
-                </div>
-              ))}
+              {history.map((item) => {
+                const comentario = getHistoryComment(item);
+                return (
+                  <div key={item.id} className="rounded-md border border-slate-200 bg-slate-50 p-3">
+                    <p className="text-sm font-bold text-slate-950">{item.acao}</p>
+                    {comentario && (
+                      <p className="mt-2 whitespace-pre-wrap text-sm font-semibold text-slate-800">{comentario}</p>
+                    )}
+                    <p className="mt-2 text-xs font-semibold text-slate-500">{formatDateTime(item.createdAt)} - {item.usuarioNome}</p>
+                  </div>
+                );
+              })}
             </CardContent>
           </Card>
           {adminMode && (
@@ -544,6 +628,11 @@ function DetailsModal({
       </aside>
     </div>
   );
+}
+
+function getHistoryComment(item: DemandHistory) {
+  const comentario = item.depois?.comentario;
+  return typeof comentario === "string" ? comentario : "";
 }
 
 function Metric({ label, value, tone = "blue" }: { label: string; value: number; tone?: "blue" | "green" | "red" | "slate" }) {
