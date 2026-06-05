@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { KanbanSquare, LogOut, Plus, ShieldCheck, Users } from "lucide-react";
@@ -22,6 +23,25 @@ const navItems = [
 export function AppShell({ user, children }: AppShellProps) {
   const pathname = usePathname();
   const router = useRouter();
+
+  useEffect(() => {
+    let active = true;
+
+    async function validateSession() {
+      const response = await fetch("/api/auth/me");
+      if (active && response.status === 401) {
+        router.push("/login");
+        router.refresh();
+      }
+    }
+
+    validateSession();
+    const interval = window.setInterval(validateSession, 10000);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
+  }, [router]);
 
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST" });

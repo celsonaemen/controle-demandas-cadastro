@@ -1,5 +1,8 @@
 import { cookies } from "next/headers";
 import { createSessionToken, SESSION_COOKIE, verifySessionToken, type SessionUser } from "@/lib/session";
+import { connectMongo } from "@/lib/mongodb";
+import { serializeUser } from "@/lib/serializers";
+import { UserModel } from "@/models/User";
 
 const SESSION_MAX_AGE = 60 * 60 * 8;
 
@@ -30,7 +33,22 @@ export async function clearSession() {
 export async function getSession() {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
-  return verifySessionToken(token);
+  const session = await verifySessionToken(token);
+  if (!session) return null;
+
+  await connectMongo();
+  const user = await UserModel.findById(session.id).lean();
+  if (!user || !user.ativo || user.statusAcesso !== "aprovado") {
+    return null;
+  }
+
+  const serialized = serializeUser(user);
+  return {
+    id: serialized.id,
+    email: serialized.email,
+    nome: serialized.nome,
+    role: serialized.role
+  } satisfies SessionUser;
 }
 
 export function isAdmin(user: SessionUser | null): user is SessionUser {

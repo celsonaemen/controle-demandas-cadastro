@@ -89,3 +89,23 @@ export async function PATCH(request: Request, context: RouteContext) {
 
   return NextResponse.json({ user: serializeUser(user.toObject()) });
 }
+
+export async function DELETE(_request: Request, context: RouteContext) {
+  const currentUser = await getSession();
+  if (!isAdmin(currentUser)) {
+    return NextResponse.json({ error: "Apenas administradores podem remover usuarios." }, { status: 403 });
+  }
+
+  const { id } = await context.params;
+  if (id === currentUser.id) {
+    return NextResponse.json({ error: "Voce nao pode remover seu proprio usuario." }, { status: 400 });
+  }
+
+  await connectMongo();
+  const user = await UserModel.findByIdAndDelete(id);
+  if (!user) {
+    return NextResponse.json({ error: "Usuario nao encontrado." }, { status: 404 });
+  }
+
+  return NextResponse.json({ ok: true });
+}

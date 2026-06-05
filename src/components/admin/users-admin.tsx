@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2, Loader2, Save, Users, XCircle } from "lucide-react";
+import { CheckCircle2, Loader2, Save, Trash2, Users, XCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -89,6 +89,27 @@ export function UsersAdmin({ currentUser }: { currentUser: SessionUser }) {
 
     setUsers((current) => current.map((item) => (item.id === user.id ? { ...data.user, password: "" } : item)));
     setMessage(`Usuario ${data.user.email} atualizado.`);
+  }
+
+  async function deleteUser(user: EditableUser) {
+    const confirmed = window.confirm(`Remover o usuario ${user.email}? Esta acao nao desfaz o historico de demandas ja criadas.`);
+    if (!confirmed) return;
+
+    setSavingId(user.id);
+    setError("");
+    setMessage("");
+
+    const response = await fetch(`/api/users/${user.id}`, { method: "DELETE" });
+    const data = await response.json().catch(() => ({}));
+    setSavingId("");
+
+    if (!response.ok) {
+      setError(data.error || "Nao foi possivel remover usuario.");
+      return;
+    }
+
+    setUsers((current) => current.filter((item) => item.id !== user.id));
+    setMessage(`Usuario ${user.email} removido.`);
   }
 
   function setAccessStatus(user: EditableUser, statusAcesso: UserAccessStatus) {
@@ -225,6 +246,12 @@ export function UsersAdmin({ currentUser }: { currentUser: SessionUser }) {
                             {savingId === user.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                             Salvar
                           </Button>
+                          {!isSelf && (
+                            <Button type="button" size="sm" variant="danger" onClick={() => deleteUser(user)} disabled={savingId === user.id}>
+                              <Trash2 className="h-4 w-4" />
+                              Remover
+                            </Button>
+                          )}
                         </div>
                       </td>
                     </tr>

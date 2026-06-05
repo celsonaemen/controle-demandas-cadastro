@@ -6,16 +6,11 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get(SESSION_COOKIE)?.value;
   const session = await verifySessionToken(token);
 
-  const isLogin = pathname === "/login";
   const isProtected =
     pathname.startsWith("/demandas") ||
     pathname.startsWith("/nova-demanda") ||
     pathname.startsWith("/admin") ||
     pathname.startsWith("/usuarios");
-
-  if (isLogin && session) {
-    return NextResponse.redirect(new URL("/demandas", request.url));
-  }
 
   if (isProtected && !session) {
     const url = new URL("/login", request.url);
