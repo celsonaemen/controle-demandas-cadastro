@@ -34,6 +34,7 @@ export function DemandsWorkspace({ user, adminMode = false }: DemandsWorkspacePr
   const [demands, setDemands] = useState<Demand[]>([]);
   const [filters, setFilters] = useState<DemandFilters>(emptyFilters);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   const [selected, setSelected] = useState<Demand | null>(null);
   const [history, setHistory] = useState<DemandHistory[]>([]);
@@ -41,14 +42,24 @@ export function DemandsWorkspace({ user, adminMode = false }: DemandsWorkspacePr
 
   useEffect(() => {
     loadDemands();
+    const interval = window.setInterval(() => {
+      loadDemands({ silent: true });
+    }, 12000);
+
+    return () => window.clearInterval(interval);
   }, []);
 
-  async function loadDemands() {
-    setLoading(true);
+  async function loadDemands(options?: { silent?: boolean }) {
+    if (options?.silent) {
+      setRefreshing(true);
+    } else {
+      setLoading(true);
+    }
     setError("");
     const response = await fetch("/api/demandas");
     const data = await response.json().catch(() => ({}));
     setLoading(false);
+    setRefreshing(false);
 
     if (!response.ok) {
       setError(data.error || "Não foi possível carregar as demandas.");
@@ -146,6 +157,9 @@ export function DemandsWorkspace({ user, adminMode = false }: DemandsWorkspacePr
           <Button type="button">Nova demanda</Button>
         </Link>
       </div>
+      {refreshing && (
+        <p className="text-xs font-semibold uppercase text-slate-500">Atualizando demandas...</p>
+      )}
 
       {error && (
         <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">

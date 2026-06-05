@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ClipboardList, KanbanSquare, LogOut, Plus, ShieldCheck } from "lucide-react";
+import { KanbanSquare, LogOut, Plus, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn, getInitials } from "@/lib/utils";
 import type { SessionUser } from "@/lib/session";
@@ -29,13 +29,11 @@ export function AppShell({ user, children }: AppShellProps) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100">
-      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white">
+    <div className="min-h-screen bg-[#f7f8f5]">
+      <header className="sticky top-0 z-20 border-b border-emerald-900/10 bg-white">
         <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-4 px-4 py-3 lg:px-6">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-primary text-white">
-              <ClipboardList className="h-5 w-5" />
-            </div>
+            <img src="/brand/logoalmenara.png" alt="Almenara" className="h-10 w-auto shrink-0 rounded-md bg-white" />
             <div className="min-w-0">
               <p className="text-xs font-bold uppercase text-slate-500">Cadastro e Legalização</p>
               <h1 className="truncate text-lg font-extrabold text-slate-950">
@@ -55,8 +53,8 @@ export function AppShell({ user, children }: AppShellProps) {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      "inline-flex min-h-10 items-center gap-2 rounded-md px-3 text-sm font-semibold text-slate-700 hover:bg-slate-100",
-                      active && "bg-blue-50 text-primary"
+                      "inline-flex min-h-10 items-center gap-2 rounded-md px-3 text-sm font-semibold text-slate-700 hover:bg-emerald-50",
+                      active && "bg-emerald-50 text-primary"
                     )}
                   >
                     <Icon className="h-4 w-4" />
@@ -83,7 +81,7 @@ export function AppShell({ user, children }: AppShellProps) {
           </div>
         </div>
 
-        <nav className="flex gap-1 overflow-x-auto border-t border-slate-100 px-4 py-2 md:hidden">
+        <nav className="flex gap-1 overflow-x-auto border-t border-emerald-900/10 px-4 py-2 md:hidden">
           {navItems
             .filter((item) => !item.admin || user.role === "admin")
             .map((item) => {
@@ -95,7 +93,7 @@ export function AppShell({ user, children }: AppShellProps) {
                   href={item.href}
                   className={cn(
                     "inline-flex min-h-9 shrink-0 items-center gap-2 rounded-md px-3 text-sm font-semibold text-slate-700",
-                    active && "bg-blue-50 text-primary"
+                    active && "bg-emerald-50 text-primary"
                   )}
                 >
                   <Icon className="h-4 w-4" />

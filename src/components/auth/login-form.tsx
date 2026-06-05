@@ -45,15 +45,34 @@ export function LoginForm({ nextPath }: LoginFormProps) {
   }
 
   return (
-    <div className="grid min-h-screen place-items-center bg-slate-100 px-4 py-8">
-      <div className="w-full max-w-md">
-        <div className="mb-5">
-          <p className="text-sm font-bold uppercase text-slate-500">Setor de Cadastro</p>
-          <h1 className="mt-1 text-3xl font-extrabold text-slate-950">Controle de Demandas</h1>
+    <div className="relative grid min-h-screen place-items-center overflow-hidden bg-slate-950 px-4 py-8">
+      <div
+        className="absolute inset-0 bg-cover bg-center opacity-65"
+        style={{ backgroundImage: "url('/brand/hero-almenara.png')" }}
+        aria-hidden="true"
+      />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0e3d2e] via-[#0e3d2e]/88 to-slate-900/20" aria-hidden="true" />
+      <div className="relative z-10 grid w-full max-w-5xl items-center gap-8 lg:grid-cols-[1fr_420px]">
+        <div className="hidden max-w-xl lg:block">
+          <img src="/brand/logoalmenara.png" alt="Almenara" className="mb-8 h-20 w-auto rounded-md bg-white/90 p-3" />
+          <p className="text-sm font-bold uppercase text-[#e0bd62]">Central interna de demandas</p>
+          <h1 className="mt-2 text-4xl font-extrabold leading-tight text-white">
+            Setor de Cadastro e Legalização
+          </h1>
+          <p className="mt-4 max-w-lg text-base font-medium text-slate-200">
+            Formalize solicitações com dados completos, acompanhe prazos e centralize o andamento operacional.
+          </p>
         </div>
 
-        <Card>
+        <Card className="border-white/20 bg-white/95 shadow-panel backdrop-blur">
           <CardContent className="p-5">
+            <div className="mb-5 lg:hidden">
+              <img src="/brand/logoalmenara.png" alt="Almenara" className="h-14 w-auto" />
+            </div>
+            <div className="mb-5">
+              <p className="text-sm font-bold uppercase text-slate-500">Setor de Cadastro</p>
+              <h2 className="mt-1 text-2xl font-extrabold text-slate-950">Controle de Demandas</h2>
+            </div>
             <div className="mb-5 flex rounded-md bg-slate-100 p-1">
               <button
                 type="button"
