@@ -38,7 +38,8 @@ export async function getSession() {
 
   await connectMongo();
   const user = await UserModel.findById(session.id).lean();
-  if (!user || !user.ativo || user.statusAcesso !== "aprovado") {
+  const statusAcesso = user?.statusAcesso || (user?.ativo ? "aprovado" : "pendente");
+  if (!user || !user.ativo || statusAcesso !== "aprovado") {
     return null;
   }
 

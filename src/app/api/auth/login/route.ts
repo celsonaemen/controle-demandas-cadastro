@@ -26,11 +26,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Credenciais invalidas." }, { status: 401 });
   }
 
-  if (user.statusAcesso === "pendente") {
+  const statusAcesso = user.statusAcesso || (user.ativo ? "aprovado" : "pendente");
+
+  if (statusAcesso === "pendente") {
     return NextResponse.json({ error: "Seu acesso ainda aguarda aprovacao do administrador." }, { status: 403 });
   }
 
-  if (user.statusAcesso === "rejeitado" || !user.ativo) {
+  if (statusAcesso === "rejeitado" || !user.ativo) {
     return NextResponse.json({ error: "Seu acesso nao esta ativo. Fale com o administrador." }, { status: 403 });
   }
 
