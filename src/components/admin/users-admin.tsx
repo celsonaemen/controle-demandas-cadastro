@@ -124,11 +124,11 @@ export function UsersAdmin({ currentUser }: { currentUser: SessionUser }) {
       <CardHeader className="flex flex-row items-center justify-between gap-3">
         <div>
           <p className="text-xs font-bold uppercase text-slate-500">Administracao</p>
-          <h3 className="flex items-center gap-2 font-bold text-slate-950">
+          <h3 className="flex items-center gap-2 font-bold text-slate-950 dark:text-slate-50">
             <Users className="h-5 w-5 text-primary" />
             Usuarios cadastrados
           </h3>
-          <p className="mt-1 text-sm font-semibold text-slate-500">
+          <p className="mt-1 text-sm font-semibold text-slate-500 dark:text-slate-400">
             {pendingCount > 0 ? `${pendingCount} aguardando aprovacao` : "Nenhuma solicitacao pendente"}
           </p>
         </div>
@@ -138,12 +138,12 @@ export function UsersAdmin({ currentUser }: { currentUser: SessionUser }) {
       </CardHeader>
       <CardContent className="grid gap-3">
         {message && (
-          <div className="rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm font-semibold text-green-700">
+          <div className="rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm font-semibold text-green-700 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-200">
             {message}
           </div>
         )}
         {error && (
-          <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+          <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200">
             {error}
           </div>
         )}
@@ -154,8 +154,8 @@ export function UsersAdmin({ currentUser }: { currentUser: SessionUser }) {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[1280px] border-collapse text-sm">
-              <thead className="bg-slate-50 text-left text-xs uppercase text-slate-500">
+            <table className="w-full min-w-[1400px] border-collapse text-sm">
+              <thead className="bg-slate-50 text-left text-xs uppercase text-slate-500 dark:bg-slate-900 dark:text-slate-400">
                 <tr>
                   <th className="px-3 py-3">Nome</th>
                   <th className="px-3 py-3">E-mail</th>
@@ -164,6 +164,7 @@ export function UsersAdmin({ currentUser }: { currentUser: SessionUser }) {
                   <th className="px-3 py-3">Acesso</th>
                   <th className="px-3 py-3">Nova senha</th>
                   <th className="px-3 py-3">Cadastro</th>
+                  <th className="px-3 py-3">Ultimo acesso</th>
                   <th className="px-3 py-3">Origem</th>
                   <th className="px-3 py-3">Acao</th>
                 </tr>
@@ -172,10 +173,14 @@ export function UsersAdmin({ currentUser }: { currentUser: SessionUser }) {
                 {sortedUsers.map((user) => {
                   const isSelf = user.id === currentUser.id;
                   return (
-                    <tr key={user.id} className="border-t border-slate-100 align-top">
+                    <tr key={user.id} className="border-t border-slate-100 align-top dark:border-slate-800">
                       <td className="px-3 py-3">
                         <Input value={user.nome} onChange={(event) => updateUser(user.id, { nome: event.target.value })} />
-                        {isSelf && <Badge className="mt-2" tone="blue">Voce</Badge>}
+                        {isSelf && (
+                          <Badge className="mt-2" tone="blue">
+                            Voce
+                          </Badge>
+                        )}
                       </td>
                       <td className="px-3 py-3">
                         <Input type="email" value={user.email} onChange={(event) => updateUser(user.id, { email: event.target.value })} />
@@ -198,7 +203,7 @@ export function UsersAdmin({ currentUser }: { currentUser: SessionUser }) {
                         </Select>
                         <AccessBadge status={user.statusAcesso} />
                         {user.aprovadoEm && (
-                          <p className="mt-2 text-xs font-semibold text-slate-500">
+                          <p className="mt-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
                             Aprovado por {user.aprovadoPorNome || "-"} em {formatDateTime(user.aprovadoEm)}
                           </p>
                         )}
@@ -221,10 +226,11 @@ export function UsersAdmin({ currentUser }: { currentUser: SessionUser }) {
                           onChange={(event) => updateUser(user.id, { password: event.target.value })}
                         />
                       </td>
-                      <td className="px-3 py-3 font-semibold text-slate-600">{formatDateTime(user.createdAt)}</td>
+                      <td className="px-3 py-3 font-semibold text-slate-600 dark:text-slate-300">{formatDateTime(user.createdAt)}</td>
+                      <td className="px-3 py-3 font-semibold text-slate-600 dark:text-slate-300">{formatDateTime(user.lastAccessAt)}</td>
                       <td className="px-3 py-3">
-                        <p className="font-semibold text-slate-700">IP: {user.cadastroIp || "-"}</p>
-                        <p className="mt-1 max-w-64 truncate text-xs font-semibold text-slate-500" title={user.cadastroUserAgent}>
+                        <p className="font-semibold text-slate-700 dark:text-slate-300">IP: {user.cadastroIp || "-"}</p>
+                        <p className="mt-1 max-w-64 truncate text-xs font-semibold text-slate-500 dark:text-slate-400" title={user.cadastroUserAgent}>
                           {user.cadastroUserAgent || "-"}
                         </p>
                       </td>
@@ -236,7 +242,13 @@ export function UsersAdmin({ currentUser }: { currentUser: SessionUser }) {
                                 <CheckCircle2 className="h-4 w-4" />
                                 Aprovar
                               </Button>
-                              <Button type="button" size="sm" variant="danger" onClick={() => saveUser({ ...user, statusAcesso: "rejeitado", ativo: false })} disabled={savingId === user.id}>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="danger"
+                                onClick={() => saveUser({ ...user, statusAcesso: "rejeitado", ativo: false })}
+                                disabled={savingId === user.id}
+                              >
                                 <XCircle className="h-4 w-4" />
                                 Rejeitar
                               </Button>
@@ -268,5 +280,9 @@ export function UsersAdmin({ currentUser }: { currentUser: SessionUser }) {
 
 function AccessBadge({ status }: { status: UserAccessStatus }) {
   const tone = status === "aprovado" ? "green" : status === "rejeitado" ? "red" : "yellow";
-  return <Badge className="mt-2" tone={tone}>{accessLabels[status]}</Badge>;
+  return (
+    <Badge className="mt-2" tone={tone}>
+      {accessLabels[status]}
+    </Badge>
+  );
 }

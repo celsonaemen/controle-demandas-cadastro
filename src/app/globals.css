@@ -23,6 +23,26 @@
   --radius: 0.5rem;
 }
 
+.dark {
+  --background: 222 47% 8%;
+  --foreground: 210 40% 96%;
+  --card: 222 47% 11%;
+  --card-foreground: 210 40% 96%;
+  --primary: 158 63% 36%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 215 28% 17%;
+  --secondary-foreground: 210 40% 96%;
+  --muted: 215 28% 17%;
+  --muted-foreground: 215 20% 65%;
+  --accent: 215 28% 18%;
+  --accent-foreground: 199 78% 70%;
+  --destructive: 0 72% 52%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 215 28% 20%;
+  --input: 215 28% 20%;
+  --ring: 199 78% 60%;
+}
+
 * {
   border-color: hsl(var(--border));
   letter-spacing: 0;
@@ -48,4 +68,8 @@ textarea {
 .kanban-scroll {
   scrollbar-width: thin;
   scrollbar-color: #94a3b8 transparent;
+}
+
+.dark .kanban-scroll {
+  scrollbar-color: #475569 transparent;
 }

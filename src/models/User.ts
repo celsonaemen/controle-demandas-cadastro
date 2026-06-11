@@ -12,7 +12,8 @@ const UserSchema = new Schema(
     cadastroUserAgent: { type: String, default: "", trim: true },
     aprovadoEm: { type: Date, default: null },
     aprovadoPor: { type: Schema.Types.ObjectId, ref: "User", default: null },
-    aprovadoPorNome: { type: String, default: "", trim: true }
+    aprovadoPorNome: { type: String, default: "", trim: true },
+    lastAccessAt: { type: Date, default: null }
   },
   {
     collection: "users",

@@ -59,6 +59,7 @@ export type User = {
   cadastroUserAgent: string;
   aprovadoEm: string | null;
   aprovadoPorNome: string;
+  lastAccessAt: string | null;
   createdAt: string;
   updatedAt: string;
 };

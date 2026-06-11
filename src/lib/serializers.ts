@@ -34,6 +34,7 @@ export function serializeUser(record: Record<string, unknown>): User {
     cadastroUserAgent: String(record.cadastroUserAgent || ""),
     aprovadoEm: dateTime(record.aprovadoEm),
     aprovadoPorNome: String(record.aprovadoPorNome || ""),
+    lastAccessAt: dateTime(record.lastAccessAt),
     createdAt: String(dateTime(record.createdAt) || ""),
     updatedAt: String(dateTime(record.updatedAt) || "")
   };

@@ -36,7 +36,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Seu acesso nao esta ativo. Fale com o administrador." }, { status: 403 });
   }
 
+  const lastAccessAt = new Date();
+  await UserModel.findByIdAndUpdate(user._id, { $set: { lastAccessAt } });
+
   const serialized = serializeUser(user.toObject());
+  serialized.lastAccessAt = lastAccessAt.toISOString();
   await setSession({
     id: serialized.id,
     nome: serialized.nome,
