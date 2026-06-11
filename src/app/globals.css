@@ -73,3 +73,77 @@ textarea {
 .dark .kanban-scroll {
   scrollbar-color: #475569 transparent;
 }
+
+.dark .bg-white {
+  background-color: hsl(var(--card));
+}
+
+.dark .bg-white\/95 {
+  background-color: hsl(var(--card) / 0.95);
+}
+
+.dark .bg-white\/90 {
+  background-color: hsl(var(--card) / 0.9);
+}
+
+.dark .bg-white\/85 {
+  background-color: hsl(var(--card) / 0.85);
+}
+
+.dark .bg-white\/80 {
+  background-color: hsl(var(--card) / 0.8);
+}
+
+.dark .bg-slate-50 {
+  background-color: hsl(215 28% 14%);
+}
+
+.dark .bg-slate-100 {
+  background-color: hsl(215 28% 18%);
+}
+
+.dark .bg-blue-50 {
+  background-color: hsl(214 50% 18%);
+}
+
+.dark .bg-green-50 {
+  background-color: hsl(142 40% 18%);
+}
+
+.dark .bg-red-50 {
+  background-color: hsl(0 50% 18%);
+}
+
+.dark .bg-amber-50 {
+  background-color: hsl(38 55% 18%);
+}
+
+.dark .border-slate-100 {
+  border-color: hsl(215 28% 18%);
+}
+
+.dark .border-slate-200 {
+  border-color: hsl(var(--border));
+}
+
+.dark .border-blue-200,
+.dark .border-green-200,
+.dark .border-red-200,
+.dark .border-amber-200 {
+  border-color: hsl(var(--border));
+}
+
+.dark .text-slate-950,
+.dark .text-slate-900 {
+  color: hsl(var(--foreground));
+}
+
+.dark .text-slate-800,
+.dark .text-slate-700 {
+  color: hsl(var(--muted-foreground));
+}
+
+.dark .text-slate-600,
+.dark .text-slate-500 {
+  color: hsl(215 20% 70%);
+}
