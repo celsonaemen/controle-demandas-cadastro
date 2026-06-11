@@ -221,7 +221,7 @@ export function DemandForm({ user, demandId }: DemandFormProps) {
             <Input value={values.cnpjCpf} onChange={(event) => updateField("cnpjCpf", event.target.value)} required disabled={isEditing && !isAdmin} />
           </Field>
           <Field label="Solicitante" required>
-            <Input value={values.solicitante} onChange={(event) => updateField("solicitante", event.target.value)} required disabled={isEditing && !isAdmin} />
+            <Input value={values.solicitante} onChange={(event) => updateField("solicitante", event.target.value)} required disabled={!isAdmin} />
           </Field>
           <Field label="E-mail" required>
             <Input type="email" value={values.email} onChange={(event) => updateField("email", event.target.value)} required disabled={isEditing && !isAdmin} />

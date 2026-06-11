@@ -15,16 +15,16 @@ function option<T extends string>(value: unknown, options: readonly T[], fallbac
   }) || fallback;
 }
 
-export function normalizeDemandInput(raw: RawDemandInput, canManage: boolean) {
+export function normalizeDemandInput(raw: RawDemandInput, canManage: boolean, loggedUserName?: string) {
   const payload = {
     empresa: text(raw.empresa),
     cnpjCpf: text(raw.cnpjCpf),
-    solicitante: text(raw.solicitante),
+    solicitante: canManage ? text(raw.solicitante) : text(loggedUserName || raw.solicitante),
     email: text(raw.email).toLowerCase(),
     telefone: text(raw.telefone),
     tipoServico: option(raw.tipoServico, SERVICE_TYPES, "Outro") as ServiceType,
     orgaoEnvolvido: text(raw.orgaoEnvolvido),
-    status: canManage ? option(raw.status, STATUS_OPTIONS, "Recebida") as DemandStatus : "Recebida" as DemandStatus,
+    status: canManage ? (option(raw.status, STATUS_OPTIONS, "Recebida") as DemandStatus) : ("Recebida" as DemandStatus),
     prioridade: option(raw.prioridade, PRIORITY_OPTIONS, "Normal") as DemandPriority,
     responsavel: canManage ? text(raw.responsavel) : "",
     prazo: text(raw.prazo),
@@ -62,25 +62,25 @@ export function validateDemandPayload(payload: ReturnType<typeof normalizeDemand
     ["cnpjCpf", "CNPJ/CPF"],
     ["solicitante", "Solicitante"],
     ["email", "E-mail"],
-    ["tipoServico", "Tipo de serviço"],
-    ["orgaoEnvolvido", "Órgão envolvido"],
+    ["tipoServico", "Tipo de servico"],
+    ["orgaoEnvolvido", "Orgao envolvido"],
     ["prazo", "Prazo"],
     ["objetivo", "Objetivo"],
-    ["proximaAcao", "Próxima ação"]
+    ["proximaAcao", "Proxima acao"]
   ];
 
   required.forEach(([key, label]) => {
     if (!String(payload[key] || "").trim()) {
-      errors.push(`${label} é obrigatório.`);
+      errors.push(`${label} e obrigatorio.`);
     }
   });
 
   if (payload.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)) {
-    errors.push("E-mail inválido.");
+    errors.push("E-mail invalido.");
   }
 
   if (payload.prazo && Number.isNaN(new Date(payload.prazo).getTime())) {
-    errors.push("Prazo inválido.");
+    errors.push("Prazo invalido.");
   }
 
   return errors;

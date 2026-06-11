@@ -24,7 +24,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json().catch(() => ({}));
-  const payload = normalizeDemandInput(body, isAdmin(user));
+  const payload = normalizeDemandInput(body, isAdmin(user), user.nome);
   const errors = validateDemandPayload(payload);
 
   if (errors.length > 0) {
