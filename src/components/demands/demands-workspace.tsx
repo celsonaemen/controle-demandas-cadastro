@@ -260,14 +260,6 @@ export function DemandsWorkspace({ user, adminMode = false }: DemandsWorkspacePr
             onStatus={updateStatus}
             onDelete={deleteDemand}
           />
-          <DemandTable
-            demands={filteredDemands}
-            adminMode={adminMode}
-            onDetails={openDetails}
-            onCopy={copySummary}
-            onStatus={updateStatus}
-            onDelete={deleteDemand}
-          />
           <KanbanBoard
             demands={filteredDemands}
             adminMode={adminMode}
@@ -276,6 +268,14 @@ export function DemandsWorkspace({ user, adminMode = false }: DemandsWorkspacePr
             onDrop={updateStatus}
             onDetails={openDetails}
             onCopy={copySummary}
+          />
+          <DemandTable
+            demands={filteredDemands}
+            adminMode={adminMode}
+            onDetails={openDetails}
+            onCopy={copySummary}
+            onStatus={updateStatus}
+            onDelete={deleteDemand}
           />
         </>
       )}
