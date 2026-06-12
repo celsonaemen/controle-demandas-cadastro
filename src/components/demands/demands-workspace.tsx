@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { PRIORITY_OPTIONS, SERVICE_TYPES, STATUS_OPTIONS } from "@/lib/constants";
-import { cn, daysUntil, formatDate, formatDateTime, normalizeSearch } from "@/lib/utils";
+import { cn, daysUntil, formatCpfCnpj, formatDate, formatDateTime, normalizeSearch } from "@/lib/utils";
 import type { SessionUser } from "@/lib/session";
 import type { Demand, DemandAttachment, DemandFilters, DemandHistory, DemandStatus } from "@/types/domain";
 
@@ -339,7 +339,7 @@ function DemandMobileList({
             </div>
 
             <div className="grid gap-1 text-sm">
-              <p className="font-semibold text-slate-700 dark:text-slate-200">CNPJ/CPF: {demand.cnpjCpf}</p>
+              <p className="font-semibold text-slate-700 dark:text-slate-200">CNPJ/CPF: {formatCpfCnpj(demand.cnpjCpf)}</p>
               <p className={cn("font-semibold text-slate-700 dark:text-slate-200", isOverdue(demand) && "text-red-700 dark:text-red-300")}>
                 Prazo: {formatDate(demand.prazo)}
               </p>
@@ -419,7 +419,7 @@ function DemandTable({
               <tr key={demand.id} className="border-t border-slate-100 align-top dark:border-slate-800">
                 <Td>#{demand.numero}</Td>
                 <Td className="font-bold text-slate-950 dark:text-slate-50">{demand.empresa}</Td>
-                <Td>{demand.cnpjCpf}</Td>
+                <Td>{formatCpfCnpj(demand.cnpjCpf)}</Td>
                 <Td>{demand.tipoServico}</Td>
                 <Td>{demand.responsavel || "-"}</Td>
                 <Td>
@@ -634,7 +634,7 @@ function DetailsModal({
 
           <div className="grid gap-3 sm:grid-cols-2">
             <Info label="Numero" value={`#${demand.numero}`} />
-            <Info label="CNPJ/CPF" value={demand.cnpjCpf} />
+            <Info label="CNPJ/CPF" value={formatCpfCnpj(demand.cnpjCpf)} />
             <Info label="Servico" value={demand.tipoServico} />
             <Info label="Orgao" value={demand.orgaoEnvolvido} />
             <Info label="Status" value={demand.status} />

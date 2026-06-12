@@ -14,6 +14,7 @@ import { LEGALIZATION_FLAGS, PRIORITY_OPTIONS, SERVICE_TYPES, STATUS_OPTIONS } f
 import { emptyFlags } from "@/lib/demand-utils";
 import type { SessionUser } from "@/lib/session";
 import type { Demand, DemandFormValues, LegalizationFlags } from "@/types/domain";
+import { formatCpfCnpj } from "@/lib/utils";
 
 const ATTACHMENT_ACCEPT = ".pdf,.jpg,.jpeg,.png,.docx,.xlsx";
 const MAX_ATTACHMENT_SIZE_MB = 4;
@@ -85,7 +86,7 @@ export function DemandForm({ user, demandId }: DemandFormProps) {
       const demand = data.demanda as Demand;
       setValues({
         empresa: demand.empresa,
-        cnpjCpf: demand.cnpjCpf,
+        cnpjCpf: formatCpfCnpj(demand.cnpjCpf),
         solicitante: demand.solicitante,
         email: demand.email,
         telefone: demand.telefone,
@@ -112,6 +113,10 @@ export function DemandForm({ user, demandId }: DemandFormProps) {
 
   function updateField<K extends keyof DemandFormValues>(key: K, value: DemandFormValues[K]) {
     setValues((current) => ({ ...current, [key]: value }));
+  }
+
+  function updateDocument(value: string) {
+    updateField("cnpjCpf", formatCpfCnpj(value));
   }
 
   function updateFlag(key: keyof LegalizationFlags, checked: boolean) {
@@ -218,7 +223,15 @@ export function DemandForm({ user, demandId }: DemandFormProps) {
             <Input value={values.empresa} onChange={(event) => updateField("empresa", event.target.value)} required disabled={isEditing && !isAdmin} />
           </Field>
           <Field label="CNPJ/CPF" required>
-            <Input value={values.cnpjCpf} onChange={(event) => updateField("cnpjCpf", event.target.value)} required disabled={isEditing && !isAdmin} />
+            <Input
+              value={values.cnpjCpf}
+              onChange={(event) => updateDocument(event.target.value)}
+              inputMode="numeric"
+              autoComplete="off"
+              placeholder="000.000.000-00 ou 00.000.000/0000-00"
+              required
+              disabled={isEditing && !isAdmin}
+            />
           </Field>
           <Field label="Solicitante" required>
             <Input value={values.solicitante} onChange={(event) => updateField("solicitante", event.target.value)} required disabled={!isAdmin} />
