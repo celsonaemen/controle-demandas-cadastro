@@ -8,6 +8,7 @@ export type SessionUser = {
   email: string;
   nome: string;
   role: UserRole;
+  lastAccessAt?: string | null;
 };
 
 function getSecretKey() {
@@ -44,7 +45,8 @@ export async function verifySessionToken(token?: string) {
       id: payload.sub,
       email: String(payload.email),
       nome: String(payload.nome),
-      role: payload.role as UserRole
+      role: payload.role as UserRole,
+      lastAccessAt: null
     } satisfies SessionUser;
   } catch {
     return null;

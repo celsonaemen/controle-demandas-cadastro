@@ -41,6 +41,9 @@ export function UsersAdmin({ currentUser }: { currentUser: SessionUser }) {
   }, [users]);
 
   const pendingCount = users.filter((user) => user.statusAcesso === "pendente").length;
+  const adminUsers = useMemo(() => {
+    return sortedUsers.filter((user) => user.role === "admin");
+  }, [sortedUsers]);
 
   async function loadUsers() {
     setLoading(true);
@@ -137,6 +140,29 @@ export function UsersAdmin({ currentUser }: { currentUser: SessionUser }) {
         </Button>
       </CardHeader>
       <CardContent className="grid gap-3">
+        <div className="grid gap-3 md:grid-cols-2">
+          <div className="rounded-md border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900">
+            <p className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Admin logado</p>
+            <p className="mt-1 text-sm font-extrabold text-slate-950 dark:text-slate-50">{currentUser.nome}</p>
+            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">{currentUser.email}</p>
+            <p className="mt-2 text-xs font-semibold text-slate-500 dark:text-slate-400">Ultimo acesso: {formatDateTime(currentUser.lastAccessAt)}</p>
+          </div>
+          <div className="rounded-md border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900">
+            <p className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Administradores cadastrados</p>
+            {adminUsers.length === 0 ? (
+              <p className="mt-2 text-sm font-semibold text-slate-500 dark:text-slate-400">Nenhum admin encontrado.</p>
+            ) : (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {adminUsers.map((admin) => (
+                  <Badge key={admin.id} tone={admin.id === currentUser.id ? "green" : "blue"}>
+                    {admin.nome}
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
         {message && (
           <div className="rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm font-semibold text-green-700 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-200">
             {message}

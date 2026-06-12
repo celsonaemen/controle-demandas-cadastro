@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { KanbanSquare, LogOut, Plus, ShieldCheck, Users } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
-import { cn, getInitials } from "@/lib/utils";
+import { cn, formatDateTime, getInitials } from "@/lib/utils";
 import type { SessionUser } from "@/lib/session";
 
 type AppShellProps = {
@@ -93,6 +93,7 @@ export function AppShell({ user, children }: AppShellProps) {
               <div className="min-w-0">
                 <p className="max-w-36 truncate text-sm font-bold text-slate-900 dark:text-slate-100">{user.nome}</p>
                 <p className="text-xs capitalize text-slate-500 dark:text-slate-400">{user.role}</p>
+                <p className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Ultimo acesso: {formatDateTime(user.lastAccessAt)}</p>
               </div>
             </div>
             <Button type="button" variant="secondary" size="sm" onClick={logout}>

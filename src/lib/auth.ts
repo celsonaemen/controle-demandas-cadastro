@@ -48,7 +48,8 @@ export async function getSession() {
     id: serialized.id,
     email: serialized.email,
     nome: serialized.nome,
-    role: serialized.role
+    role: serialized.role,
+    lastAccessAt: serialized.lastAccessAt
   } satisfies SessionUser;
 }
 
