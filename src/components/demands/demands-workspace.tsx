@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, Clipboard, Download, Eye, FileText, Loader2, MessageSquare, Pencil, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -497,14 +497,55 @@ function KanbanBoard({
   onDetails: (demand: Demand) => void;
   onCopy: (demand: Demand) => void;
 }) {
+  const topScrollRef = useRef<HTMLDivElement | null>(null);
+  const boardScrollRef = useRef<HTMLDivElement | null>(null);
+  const [scrollWidth, setScrollWidth] = useState(0);
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      setScrollWidth(boardScrollRef.current?.scrollWidth || 0);
+    };
+
+    measure();
+
+    const board = boardScrollRef.current;
+    if (!board) return;
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(board);
+    window.addEventListener("resize", measure);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [demands.length]);
+
+  function syncScroll(source: HTMLDivElement, target: HTMLDivElement | null) {
+    if (!target) return;
+    target.scrollLeft = source.scrollLeft;
+  }
+
   return (
     <section className="grid gap-3">
       <div>
         <p className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Kanban</p>
         <h3 className="text-xl font-extrabold text-slate-950 dark:text-slate-50">Demandas por status</h3>
       </div>
-      <div className="kanban-scroll-top overflow-x-auto" dir="rtl">
-        <div className="kanban-scroll grid auto-cols-[280px] grid-flow-col gap-3 pb-3 sm:auto-cols-[300px] lg:auto-cols-[320px]" dir="ltr">
+      <div className="grid gap-2">
+        <div
+          ref={topScrollRef}
+          className="overflow-x-auto overflow-y-hidden rounded-md border border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900/70"
+          onScroll={(event) => syncScroll(event.currentTarget, boardScrollRef.current)}
+        >
+          <div aria-hidden="true" className="h-4" style={{ width: scrollWidth ? `${scrollWidth}px` : "100%" }} />
+        </div>
+
+        <div
+          ref={boardScrollRef}
+          className="kanban-scroll grid auto-cols-[280px] grid-flow-col gap-3 overflow-x-auto pb-3 sm:auto-cols-[300px] lg:auto-cols-[320px]"
+          onScroll={(event) => syncScroll(event.currentTarget, topScrollRef.current)}
+        >
           {STATUS_OPTIONS.map((status) => {
             const items = demands.filter((demand) => demand.status === status);
             return (
