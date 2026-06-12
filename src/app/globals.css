@@ -70,7 +70,19 @@ textarea {
   scrollbar-color: #94a3b8 transparent;
 }
 
+.kanban-scroll-top {
+  direction: rtl;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #94a3b8 transparent;
+}
+
 .dark .kanban-scroll {
+  scrollbar-color: #475569 transparent;
+}
+
+.dark .kanban-scroll-top {
   scrollbar-color: #475569 transparent;
 }
 

@@ -503,65 +503,67 @@ function KanbanBoard({
         <p className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Kanban</p>
         <h3 className="text-xl font-extrabold text-slate-950 dark:text-slate-50">Demandas por status</h3>
       </div>
-      <div className="kanban-scroll grid auto-cols-[280px] grid-flow-col gap-3 overflow-x-auto pb-3 sm:auto-cols-[300px] lg:auto-cols-[320px]">
-        {STATUS_OPTIONS.map((status) => {
-          const items = demands.filter((demand) => demand.status === status);
-          return (
-            <div
-              key={status}
-              className="min-h-[420px] rounded-md border border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900/70"
-              onDragOver={(event) => adminMode && event.preventDefault()}
-              onDrop={() => draggingId && onDrop(draggingId, status)}
-            >
-              <div className="flex items-center justify-between border-b border-slate-200 bg-white px-3 py-3 dark:border-slate-800 dark:bg-slate-950">
-                <h4 className="font-bold text-slate-950 dark:text-slate-50">{status}</h4>
-                <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-bold text-primary dark:bg-blue-950/60 dark:text-blue-200">
-                  {items.length}
-                </span>
+      <div className="kanban-scroll-top overflow-x-auto" dir="rtl">
+        <div className="kanban-scroll grid auto-cols-[280px] grid-flow-col gap-3 pb-3 sm:auto-cols-[300px] lg:auto-cols-[320px]" dir="ltr">
+          {STATUS_OPTIONS.map((status) => {
+            const items = demands.filter((demand) => demand.status === status);
+            return (
+              <div
+                key={status}
+                className="min-h-[420px] rounded-md border border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900/70"
+                onDragOver={(event) => adminMode && event.preventDefault()}
+                onDrop={() => draggingId && onDrop(draggingId, status)}
+              >
+                <div className="flex items-center justify-between border-b border-slate-200 bg-white px-3 py-3 dark:border-slate-800 dark:bg-slate-950">
+                  <h4 className="font-bold text-slate-950 dark:text-slate-50">{status}</h4>
+                  <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-bold text-primary dark:bg-blue-950/60 dark:text-blue-200">
+                    {items.length}
+                  </span>
+                </div>
+                <div className="grid gap-2 p-2">
+                  {items.length === 0 && (
+                    <div className="grid min-h-24 place-items-center rounded-md border border-dashed border-slate-300 text-sm font-semibold text-slate-400 dark:border-slate-700 dark:text-slate-500">
+                      Sem demandas
+                    </div>
+                  )}
+                  {items.map((demand) => (
+                    <article
+                      key={demand.id}
+                      draggable={adminMode}
+                      onDragStart={() => onDrag(demand.id)}
+                      className={cn(
+                        "grid gap-2 rounded-md border bg-white p-3 shadow-sm dark:bg-slate-950",
+                        isOverdue(demand) ? "border-red-200 dark:border-red-900/60" : "border-slate-200 dark:border-slate-800"
+                      )}
+                    >
+                      <div>
+                        <p className="text-sm font-extrabold text-slate-950 dark:text-slate-50">{demand.empresa}</p>
+                        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">{demand.tipoServico}</p>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        <PriorityBadge priority={demand.prioridade} />
+                        <StatusBadge status={demand.status} />
+                      </div>
+                      <dl className="grid gap-1 text-xs">
+                        <Meta label="Prazo" value={formatDate(demand.prazo)} danger={isOverdue(demand)} />
+                        <Meta label="Resp." value={demand.responsavel || "-"} />
+                        <Meta label="Acao" value={demand.proximaAcao || "-"} />
+                      </dl>
+                      <div className="flex flex-wrap gap-1.5">
+                        <Button type="button" size="sm" variant="secondary" onClick={() => onDetails(demand)}>
+                          Ver
+                        </Button>
+                        <Button type="button" size="sm" variant="secondary" onClick={() => onCopy(demand)}>
+                          Copiar
+                        </Button>
+                      </div>
+                    </article>
+                  ))}
+                </div>
               </div>
-              <div className="grid gap-2 p-2">
-                {items.length === 0 && (
-                  <div className="grid min-h-24 place-items-center rounded-md border border-dashed border-slate-300 text-sm font-semibold text-slate-400 dark:border-slate-700 dark:text-slate-500">
-                    Sem demandas
-                  </div>
-                )}
-                {items.map((demand) => (
-                  <article
-                    key={demand.id}
-                    draggable={adminMode}
-                    onDragStart={() => onDrag(demand.id)}
-                    className={cn(
-                      "grid gap-2 rounded-md border bg-white p-3 shadow-sm dark:bg-slate-950",
-                      isOverdue(demand) ? "border-red-200 dark:border-red-900/60" : "border-slate-200 dark:border-slate-800"
-                    )}
-                  >
-                    <div>
-                      <p className="text-sm font-extrabold text-slate-950 dark:text-slate-50">{demand.empresa}</p>
-                      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">{demand.tipoServico}</p>
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      <PriorityBadge priority={demand.prioridade} />
-                      <StatusBadge status={demand.status} />
-                    </div>
-                    <dl className="grid gap-1 text-xs">
-                      <Meta label="Prazo" value={formatDate(demand.prazo)} danger={isOverdue(demand)} />
-                      <Meta label="Resp." value={demand.responsavel || "-"} />
-                      <Meta label="Acao" value={demand.proximaAcao || "-"} />
-                    </dl>
-                    <div className="flex flex-wrap gap-1.5">
-                      <Button type="button" size="sm" variant="secondary" onClick={() => onDetails(demand)}>
-                        Ver
-                      </Button>
-                      <Button type="button" size="sm" variant="secondary" onClick={() => onCopy(demand)}>
-                        Copiar
-                      </Button>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </section>
   );
